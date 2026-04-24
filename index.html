@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>Kitchen Calc — Measure & Proportion Calculator for Cooking</title>
+  <meta
+    name="description"
+    content="Kitchen Calc is a cozy cooking helper for quick ingredient conversions and proportion calculations right in your browser."
+  />
+
+  <style>
+    :root {
+      --sand: #e8d59f;
+      --sand-light: #f6ebbf;
+      --sand-deep: #dbc27a;
+      --panel: #ead9a3;
+      --card: #f4e4a8;
+      --brown: #5d3518;
+      --brown-soft: #8d6237;
+      --brown-line: #7a4b24;
+      --gold: #efc756;
+      --gold-deep: #cf9222;
+      --green: #87ab4c;
+      --green-soft: #cfe29f;
+      --white-soft: #fff8e6;
+      --shadow: rgba(70, 42, 19, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Courier New", Courier, monospace;
+      color: var(--brown);
+      background-color: var(--sand);
+      background-image:
+        radial-gradient(rgba(139, 89, 25, 0.10) 1px, transparent 1.4px),
+        radial-gradient(rgba(139, 89, 25, 0.08) 1px, transparent 1.4px),
+        radial-gradient(rgba(139, 89, 25, 0.06) 1px, transparent 1.4px);
+      background-size:
+        17px 19px,
+        23px 21px,
+        31px 29px;
+      background-position:
+        3px 5px,
+        11px 7px,
+        19px 13px;
+      line-height: 1.5;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .site-shell {
+      padding: 28px 0 48px;
+    }
+
+    .topbar {
+      margin-bottom: 18px;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 18px;
+      background: rgba(251, 243, 208, 0.72);
+      border: 4px solid var(--brown);
+      border-radius: 24px;
+      box-shadow:
+        inset 0 0 0 4px rgba(255, 246, 214, 0.65),
+        0 4px 0 rgba(93, 53, 24, 0.10);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-icon {
+      width: 72px;
+      height: 72px;
+      flex: 0 0 72px;
+      display: grid;
+      place-items: center;
+      background: #f4d87e;
+      border: 4px solid var(--brown);
+      border-radius: 18px;
+      box-shadow:
+        inset 0 0 0 3px rgba(255, 247, 218, 0.7),
+        0 3px 0 rgba(93, 53, 24, 0.12);
+    }
+
+    .brand-icon img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .brand-copy h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.05;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-copy p {
+      margin: 6px 0 0;
+      font-size: 15px;
+      color: var(--brown-soft);
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .nav a {
+      padding: 12px 18px;
+      background: #f7efcf;
+      border: 3px solid var(--brown);
+      border-radius: 16px;
+      font-weight: 700;
+      box-shadow: 0 3px 0 rgba(93, 53, 24, 0.10);
+      transition: transform 0.15s ease;
+    }
+
+    .nav a:hover {
+      transform: translateY(-1px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    .panel {
+      background: rgba(247, 238, 203, 0.92);
+      border: 4px solid var(--brown);
+      border-radius: 28px;
+      box-shadow:
+        inset 0 0 0 4px rgba(255, 246, 214, 0.55),
+        0 4px 0 rgba(93, 53, 24, 0.10);
+    }
+
+    .hero-copy {
+      padding: 28px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding: 8px 14px;
+      background: #f3d17d;
+      border: 3px solid var(--brown);
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .eyebrow img {
+      width: 24px;
+      height: 24px;
+    }
+
+    .hero-copy h2 {
+      margin: 0 0 14px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.1;
+    }
+
+    .hero-copy p {
+      margin: 0 0 20px;
+      font-size: 17px;
+      color: var(--brown-soft);
+      max-width: 60ch;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 0 18px;
+      border-radius: 16px;
+      border: 3px solid var(--brown);
+      font-weight: 700;
+      box-shadow: 0 3px 0 rgba(93, 53, 24, 0.12);
+    }
+
+    .button-primary {
+      background: var(--gold);
+    }
+
+    .button-secondary {
+      background: #f7efcf;
+    }
+
+    .button img {
+      width: 26px;
+      height: 26px;
+    }
+
+    .hero-points {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .hero-points li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--brown);
+      font-weight: 700;
+    }
+
+    .hero-points li::before {
+      content: "•";
+      color: var(--gold-deep);
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .hero-preview {
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .preview-card {
+      width: 100%;
+      max-width: 430px;
+      background: #efe0a5;
+      border: 4px solid var(--brown);
+      border-radius: 24px;
+      padding: 14px;
+      box-shadow:
+        inset 0 0 0 3px rgba(255, 246, 214, 0.55),
+        0 4px 0 rgba(93, 53, 24, 0.10);
+    }
+
+    .preview-card img {
+      width: 100%;
+      border-radius: 18px;
+      border: 3px solid rgba(93, 53, 24, 0.16);
+      background: var(--sand-light);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .stat-card {
+      padding: 18px;
+      background: rgba(247, 238, 203, 0.92);
+      border: 4px solid var(--brown);
+      border-radius: 24px;
+      text-align: center;
+      box-shadow:
+        inset 0 0 0 4px rgba(255, 246, 214, 0.55),
+        0 4px 0 rgba(93, 53, 24, 0.10);
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 30px;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .section {
+      margin-bottom: 22px;
+      padding: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .section-header img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+    }
+
+    .section-header h3 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.1;
+    }
+
+    .section-subtext {
+      margin: -4px 0 18px;
+      color: var(--brown-soft);
+      font-size: 15px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .feature-card {
+      padding: 18px;
+      background: #f8efc6;
+      border: 3px solid var(--brown-line);
+      border-radius: 20px;
+    }
+
+    .feature-card-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .feature-card-head img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      flex: 0 0 40px;
+    }
+
+    .feature-card h4 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    .feature-card p {
+      margin: 0;
+      color: var(--brown-soft);
+      font-size: 15px;
+    }
+
+    .showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .showcase-card {
+      padding: 14px;
+      background: #f8efc6;
+      border: 3px solid var(--brown-line);
+      border-radius: 20px;
+    }
+
+    .showcase-card img {
+      width: 100%;
+      border-radius: 14px;
+      border: 3px solid rgba(93, 53, 24, 0.12);
+      background: #f1e6b5;
+      margin-bottom: 12px;
+    }
+
+    .showcase-card h4 {
+      margin: 0 0 6px;
+      font-size: 20px;
+    }
+
+    .showcase-card p {
+      margin: 0;
+      color: var(--brown-soft);
+      font-size: 15px;
+    }
+
+    .support-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .support-card,
+    .faq-card {
+      padding: 18px;
+      background: #f8efc6;
+      border: 3px solid var(--brown-line);
+      border-radius: 20px;
+    }
+
+    .support-card h4,
+    .faq-card h4 {
+      margin: 0 0 12px;
+      font-size: 21px;
+    }
+
+    .support-list,
+    .faq-list {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .support-list li,
+    .faq-list li {
+      margin-bottom: 10px;
+      color: var(--brown-soft);
+    }
+
+    .support-note {
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: var(--green-soft);
+      border: 3px solid var(--green);
+      border-radius: 16px;
+      color: var(--brown);
+      font-weight: 700;
+    }
+
+    .cta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 24px;
+      margin-bottom: 22px;
+    }
+
+    .cta-copy h3 {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 3vw, 34px);
+    }
+
+    .cta-copy p {
+      margin: 0;
+      color: var(--brown-soft);
+    }
+
+    .footer {
+      padding: 20px 24px;
+      text-align: center;
+      background: rgba(247, 238, 203, 0.92);
+      border: 4px solid var(--brown);
+      border-radius: 24px;
+      box-shadow:
+        inset 0 0 0 4px rgba(255, 246, 214, 0.55),
+        0 4px 0 rgba(93, 53, 24, 0.10);
+    }
+
+    .footer p {
+      margin: 6px 0;
+      color: var(--brown-soft);
+      font-size: 14px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .footer-links a {
+      font-weight: 700;
+    }
+
+    @media (max-width: 920px) {
+      .hero,
+      .showcase,
+      .support-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats,
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar-inner {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .nav {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        width: min(100% - 20px, 1120px);
+      }
+
+      .site-shell {
+        padding: 16px 0 28px;
+      }
+
+      .hero-copy,
+      .section,
+      .cta,
+      .footer {
+        padding: 18px;
+      }
+
+      .brand {
+        align-items: flex-start;
+      }
+
+      .brand-icon {
+        width: 60px;
+        height: 60px;
+        flex-basis: 60px;
+      }
+
+      .brand-icon img {
+        width: 40px;
+        height: 40px;
+      }
+
+      .nav a,
+      .button {
+        width: 100%;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .section-header {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <div class="container">
+      <header class="topbar">
+        <div class="topbar-inner">
+          <div class="brand">
+            <div class="brand-icon">
+              <img src="icons/icon-chef-hat.png" alt="Kitchen Calc logo" />
+            </div>
+
+            <div class="brand-copy">
+              <h1>Kitchen Calc</h1>
+              <p>Measure &amp; Proportion Calculator for Cooking</p>
+            </div>
+          </div>
+
+          <nav class="nav">
+            <a href="#features">Features</a>
+            <a href="#screenshots">Screenshot</a>
+            <a href="#support">Support</a>
+          </nav>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div class="panel hero-copy">
+          <div class="eyebrow">
+            <img src="icons/app-icon-48.png" alt="" />
+            Cozy cooking helper
+          </div>
+
+          <h2>Quick kitchen conversions and recipe proportions in one cozy tool</h2>
+
+          <p>
+            Kitchen Calc helps you convert cooking measurements and solve simple proportions
+            for recipes right inside your browser. Built for fast everyday use with a warm
+            pixel-style interface inspired by cozy farming and cooking games.
+          </p>
+
+          <div class="hero-actions">
+            <a class="button button-primary" href="#support">
+              <img src="icons/icon-tab-proportions.png" alt="" />
+              Get support
+            </a>
+
+            <a class="button button-secondary" href="#screenshots">
+              <img src="icons/icon-tab-measures.png" alt="" />
+              View screenshot
+            </a>
+          </div>
+
+          <ul class="hero-points">
+            <li>Convert measures for common cooking ingredients</li>
+            <li>Work with metric and common US kitchen units</li>
+            <li>Solve recipe proportions in a simple visual layout</li>
+          </ul>
+        </div>
+
+        <div class="panel hero-preview">
+          <div class="preview-card">
+            <img src="images/popup-main.png" alt="Kitchen Calc popup screenshot" />
+          </div>
+        </div>
+      </section>
+
+      <section class="stats">
+        <div class="stat-card">
+          <strong>2-in-1</strong>
+          <span>Measure converter + proportion calculator</span>
+        </div>
+        <div class="stat-card">
+          <strong>Quick</strong>
+          <span>Open, calculate, close — no clutter</span>
+        </div>
+        <div class="stat-card">
+          <strong>Cozy UI</strong>
+          <span>Warm pixel-art inspired visual style</span>
+        </div>
+      </section>
+
+      <section id="features" class="panel section">
+        <div class="section-header">
+          <img src="icons/icon-section-measures.png" alt="" />
+          <h3>Features</h3>
+        </div>
+
+        <p class="section-subtext">
+          Designed to stay simple, useful, and pleasant to use.
+        </p>
+
+        <div class="features-grid">
+          <article class="feature-card">
+            <div class="feature-card-head">
+              <img src="icons/icon-tab-measures.png" alt="" />
+              <h4>Measure converter</h4>
+            </div>
+            <p>
+              Convert common cooking measurements for ingredients such as flour, sugar,
+              water, oil, milk, butter, rice, oats, and salt.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-card-head">
+              <img src="icons/icon-tab-proportions.png" alt="" />
+              <h4>Proportion calculator</h4>
+            </div>
+            <p>
+              Quickly solve recipe-style proportions in a clear fraction layout by filling
+              any three fields and calculating the missing value.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-card-head">
+              <img src="icons/unit-liquid.png" alt="" />
+              <h4>Useful kitchen units</h4>
+            </div>
+            <p>
+              Includes metric-style values and common US kitchen units like cups,
+              tablespoons, teaspoons, and liquid-based measures.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-card-head">
+              <img src="icons/icon-pot.png" alt="" />
+              <h4>Made for fast everyday use</h4>
+            </div>
+            <p>
+              The popup remembers entered values during the browser session, so you can
+              reopen it without losing your current calculation.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="screenshots" class="panel section">
+        <div class="section-header">
+          <img src="icons/icon-pot.png" alt="" />
+          <h3>Screenshot</h3>
+        </div>
+
+        <p class="section-subtext">
+          A quick look at the extension interface.
+        </p>
+
+        <div class="showcase">
+          <article class="showcase-card">
+            <img src="images/popup-main.png" alt="Kitchen Calc interface screenshot" />
+            <h4>Measure converter view</h4>
+            <p>
+              The main screen focuses on ingredient conversion with a clean, readable layout.
+            </p>
+          </article>
+
+          <article class="showcase-card">
+            <img src="images/screenshot-1.png" alt="Kitchen Calc additional screenshot" />
+            <h4>Pixel-style design</h4>
+            <p>
+              The visual design uses warm colors, rounded panels, crisp icons, and a cozy,
+              game-inspired atmosphere.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="support" class="panel section">
+        <div class="section-header">
+          <img src="icons/icon-section-proportions.png" alt="" />
+          <h3>Support</h3>
+        </div>
+
+        <p class="section-subtext">
+          Help, feedback, and contact information for Kitchen Calc.
+        </p>
+
+        <div class="support-grid">
+          <article class="support-card">
+            <h4>Need help?</h4>
+            <ul class="support-list">
+              <li>If the popup looks outdated, reload the extension on the Chrome extensions page.</li>
+              <li>If values do not update, close and reopen the popup once.</li>
+              <li>For bug reports, include a short description and, if possible, a screenshot.</li>
+            </ul>
+
+            <div class="support-note">
+              Contact email: zeronsfwhelp@gmail.com
+            </div>
+          </article>
+
+          <article class="faq-card">
+            <h4>FAQ</h4>
+            <ul class="faq-list">
+              <li><strong>What does Kitchen Calc do?</strong><br />It converts cooking measures and solves simple proportions for recipes.</li>
+              <li><strong>Does it work offline?</strong><br />Yes, the popup works locally in the browser.</li>
+              <li><strong>Will a privacy policy be added later?</strong><br />Yes, a dedicated privacy policy page can be added to this site anytime.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel cta">
+        <div class="cta-copy">
+          <h3>Simple calculations for everyday cooking</h3>
+          <p>
+            Kitchen Calc keeps the workflow quick, clear, and cozy.
+          </p>
+        </div>
+
+        <a class="button button-primary" href="#support">
+          <img src="icons/icon-proportion.png" alt="" />
+          Open support section
+        </a>
+      </section>
+
+      <footer class="footer">
+        <strong>Kitchen Calc</strong>
+        <p>Fast • Simple • For cooking</p>
+        <div class="footer-links">
+          <a href="#features">Features</a>
+          <a href="#screenshots">Screenshot</a>
+          <a href="#support">Support</a>
+          <a href="#">Privacy policy (coming later)</a>
+        </div>
+        <p>© 2026 Kitchen Calc</p>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>
