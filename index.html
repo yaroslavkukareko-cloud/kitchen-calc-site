@@ -40,22 +40,31 @@
 
     body {
       margin: 0;
-      font-family: "Courier New", Courier, monospace;
-      color: var(--brown);
-      background-color: var(--sand);
+      font-family: "Courier New", monospace;
+      color: #5d3518;
+
+      background-color: #ead89f;
+
       background-image:
-        radial-gradient(rgba(139, 89, 25, 0.10) 1px, transparent 1.4px),
-        radial-gradient(rgba(139, 89, 25, 0.08) 1px, transparent 1.4px),
-        radial-gradient(rgba(139, 89, 25, 0.06) 1px, transparent 1.4px);
+        radial-gradient(circle at 20% 30%, rgba(145, 103, 49, 0.20) 1px, transparent 1.2px),
+        radial-gradient(circle at 70% 60%, rgba(120, 84, 38, 0.15) 1px, transparent 1.3px),
+        radial-gradient(circle at 40% 80%, rgba(160, 118, 62, 0.10) 1px, transparent 1.1px),
+        radial-gradient(circle at 15% 20%, rgba(180, 140, 80, 0.07) 8px, transparent 18px),
+        radial-gradient(circle at 75% 70%, rgba(150, 110, 60, 0.05) 10px, transparent 20px);
+
       background-size:
-        17px 19px,
-        23px 21px,
-        31px 29px;
+        18px 18px,
+        24px 22px,
+        30px 28px,
+        120px 120px,
+        160px 160px;
+
       background-position:
-        3px 5px,
-        11px 7px,
-        19px 13px;
-      line-height: 1.5;
+        0 0,
+        7px 11px,
+        13px 5px,
+        0 0,
+        40px 30px;
     }
 
     img {
